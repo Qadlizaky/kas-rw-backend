@@ -44,4 +44,4 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
-      nodePort: 30007 # Aplikasi Anda akan bisa diakses via IP VM di port 30007
+      nodePort: 30080 # Aplikasi Anda akan bisa diakses via IP VM di port 30007
