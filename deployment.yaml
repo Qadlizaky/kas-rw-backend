@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kas-rw-backend-deployment
+  labels:
+    app: kas-rw-backend
+spec:
+  replicas: 2 # Menjalankan 2 clone aplikasi sekaligus demi kestabilan (High Availability)
+  selector:
+    matchLabels:
+      app: kas-rw-backend
+  template:
+    metadata:
+      labels:
+        app: kas-rw-backend
+    spec:
+      containers:
+      - name: kas-rw-backend
+        image: qadlizaky/kas-rw-backend:v1 # Mengambil image dari Docker Hub Anda
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DB_HOST
+          value: "192.168.56.11" # IP vm-database
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_NAME
+          value: "kasrw"
+        - name: DB_USER
+          value: "kasrw_user"
+        - name: DB_PASSWORD
+          value: "password123"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kas-rw-backend-service
+spec:
+  type: NodePort # Membuka akses agar bisa diakses dari luar VM
+  selector:
+    app: kas-rw-backend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30007 # Aplikasi Anda akan bisa diakses via IP VM di port 30007
